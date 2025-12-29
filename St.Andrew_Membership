@@ -1,0 +1,13 @@
+-- DBMS for St. Andrew Methodist Church, C2.
+
+CREATE TABLE Membership(
+MemberID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+FirstName VARCHAR(50) NOT NULL,
+LastName VARCHAR(50) NOT NULL,
+Gender VARCHAR(50) NOT NULL UNIQUE,
+DateOfBirth DATE NOT NULL,
+EmploymentStatus VARCHAR(50) NOT NULL,
+Fellowship VARCHAR(255),
+Class VARCHAR(50)
+OtherRoles VARCHAR(50)
+);
