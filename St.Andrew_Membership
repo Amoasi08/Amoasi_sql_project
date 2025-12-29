@@ -1,13 +1,96 @@
 -- DBMS for St. Andrew Methodist Church, C2.
 
-CREATE TABLE Membership(
-MemberID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-FirstName VARCHAR(50) NOT NULL,
-LastName VARCHAR(50) NOT NULL,
-Gender VARCHAR(50) NOT NULL UNIQUE,
-DateOfBirth DATE NOT NULL,
-EmploymentStatus VARCHAR(50) NOT NULL,
-Fellowship VARCHAR(255),
-Class VARCHAR(50)
-OtherRoles VARCHAR(50)
+CREATE DATABASE andrewDB;
+
+CREATE TABLE Membership (
+    MemberID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    Gender VARCHAR(50) NOT NULL UNIQUE,
+    DateOfBirth DATE NOT NULL,
+    PhoneNumber VARCHAR(20) NOT NULL,
+    EmploymentStatus VARCHAR(50) NOT NULL,
+    Fellowship VARCHAR(255),
+    Class VARCHAR(50),
+    OtherRoles VARCHAR(50)
 );
+
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+CREATE TABLE Gender (
+    GenderID INT PRIMARY KEY AUTO_INCREMENT, -- Use INT for better compatibility and performance
+    GenderName VARCHAR(50) NOT NULL UNIQUE,
+    Description VARCHAR(100) -- Optional, for more detailed info
+    CONSTRAINT chk_GenderName_Full CHECK (GenderName IN ('Male', 'Female'))
+);
+
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+CREATE TABLE Contacts (
+    ContactID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    PhoneNumber VARCHAR(20) -- Store phone numbers as strings
+    CONSTRAINT fk_membership
+        FOREIGN KEY (MemberID)
+        REFERENCES Membership (MemberID)
+);
+
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+CREATE TABLE EmploymentStatus (
+    status_id INT PRIMARY KEY,
+    status_name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT
+);
+
+CREATE TABLE Employees (
+    employee_id INT PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    -- Other employee details...
+    employment_status_id INT NOT NULL,
+    CONSTRAINT fk_employee_status
+        FOREIGN KEY (employment_status_id)
+        REFERENCES EmploymentStatus (status_id)
+);
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+CREATE TABLE Fellowship (
+    FellowshipID INT PRIMARY KEY AUTO_INCREMENT,
+    fellowship_name VARCHAR(100),
+    description TEXT
+);
+
+CREATE TABLE GroupFellowship (
+    MembershipID INT PRIMARY KEY AUTO_INCREMENT
+    FellowshipID INT NOT NULL,
+    MemberID INT NOT NULL,
+    Position VARCHAR(50), -- e.g., 'Leader', 'Participant'
+    FOREIGN KEY (FellowshipID) REFERENCES Fellowship(FellowshipID),
+    FOREIGN KEY (MemberID) REFERENCES Membership(MemberID),
+    UNIQUE (FellowshipID, MemberID) -- Ensures a member can't be in the same group twice
+)
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+CREATE TABLE BibleClass (
+    BibleClassID INT PRIMARY KEY AUTO_INCREMENT,
+    BibleClass_name VARCHAR(100),
+    description TEXT
+);
+
+
+-- Linking Membership table and GroupMembership table
+CREATE TABLE GroupBibleClass (
+    MembershipID INT PRIMARY KEY AUTO_INCREMENT, -- Optional: Can use a composite primary key instead
+    BibleClassID INT NOT NULL,
+    MemberID INT NOT NULL,
+    Role VARCHAR(50), -- e.g., 'Leader', 'Participant'
+    FOREIGN KEY (BibleClassID) REFERENCES BibleClass(BibleClassID),
+    FOREIGN KEY (MemberID) REFERENCES Membership(MemberID),
+    UNIQUE (BibleClassID, MemberID) -- Ensures a member can't be in the same group twice
+);
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
